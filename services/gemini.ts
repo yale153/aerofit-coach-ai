@@ -4,7 +4,7 @@ import { Exercise, WorkoutSession, UserStats, MuscleGroup } from "../types";
 const getClient = (apiKey: string) => new GoogleGenAI({ apiKey });
 
 const SYSTEM_INSTRUCTION_COACH = `
-Sei il Tenente Colonnello "Falco", istruttore Aeronautica Militare. 
+Sei il Tenente Colonnello "Falco", istruttore Aeronautica Militare.  
 Obiettivo: Body Recomposition (Definizione). 
 Stile: Tecnico, Autorevole, Motivante.
 Vincoli: NO BILANCIERI.  Usa Manubri, Cavi, Macchine. 
@@ -92,7 +92,7 @@ export const generateExerciseIllustration = async (apiKey: string, exerciseName:
             svg = svg.replace(/```svg/g, ''). replace(/```xml/g, ''). replace(/```/g, ''). trim();
         }
 
-        if (! svg. startsWith('<svg')) return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" stroke="white" stroke-width="2" fill="none"/><text x="50" y="55" text-anchor="middle" fill="white" font-size="8">N/A</text></svg>`;
+        if (! svg.startsWith('<svg')) return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" stroke="white" stroke-width="2" fill="none"/><text x="50" y="55" text-anchor="middle" fill="white" font-size="8">N/A</text></svg>`;
         return svg;
     } catch (e) {
         return `<svg viewBox="0 0 100 100" xmlns="http://www. w3.org/2000/svg"><rect width="100" height="100" fill="none" stroke="#444"/><text x="50" y="50" text-anchor="middle" fill="#666" font-size="10">ERROR</text></svg>`;
@@ -109,20 +109,20 @@ export const generateWeeklyPlan = async (
   
   const prompt = `
     Crea una scheda settimanale di ${stats.sessionsPerWeek} sessioni. 
-    Utente: ${stats.height}cm, ${stats.weight}kg.
+    Utente: ${stats.height}cm, ${stats.weight}kg. 
     Target: Definizione / Military Fitness.
     Durata sessione: ${durationMinutes} min.
     Storico recente: ${historySummary}
     
     CRITERI FONDAMENTALI:
-    1. Primo esercizio SEMPRE Cardio (es.  Vogatore, Tapis Roulant) come Warmup. 
+    1. Primo esercizio SEMPRE Cardio (es. Vogatore, Tapis Roulant) come Warmup. 
     2.  Usa manubri, cavi, macchine.  NIENTE BILANCIERI. 
-    3. Ogni sessione deve avere un titolo militare (es. "Protocollo Alpha", "Operazione Gambe").
+    3.  Ogni sessione deve avere un titolo militare (es. "Protocollo Alpha", "Operazione Gambe").
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2. 5-flash', 
+      model: 'gemini-2.5-flash', 
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION_COACH,
@@ -169,7 +169,7 @@ export const generateQuickSession = async (
         2.  Esercizi Core / Focus (Manubri, Cavi, Macchine)
         3. Defaticamento
         
-        Regole: No bilancieri. Stile military. 
+        Regole: No bilancieri.  Stile military. 
     `;
 
     const response = await ai. models.generateContent({
@@ -184,13 +184,13 @@ export const generateQuickSession = async (
 
     const data = JSON.parse(response.text || "{}");
     return {
-        ... data,
+        ...data,
         id: generateId(),
         dateCreated: new Date().toISOString(),
         durationMinutes,
         completed: false,
         isQuickSession: true,
-        exercises: data. exercises?. map((ex: any) => ({
+        exercises: data.exercises?. map((ex: any) => ({
             ...ex,
             id: generateId()
         })) || []
@@ -220,7 +220,7 @@ export const swapExercise = async (
     }
   });
 
-  const newExercise = JSON.parse(response. text || "{}");
+  const newExercise = JSON.parse(response.text || "{}");
   
   // CRITICAL FIX: Reuse the existing ID so React knows which component to update
   return {
@@ -266,14 +266,14 @@ export const chatWithCoach = async (
 ) => {
   const ai = getClient(apiKey);
   
-  const chat = await ai.chats. create({
-    model: 'gemini-2.5-flash',
+  const chat = ai.chats.create({
+    model: 'gemini-2. 5-flash',
     history: history,
     config: {
       systemInstruction: `${SYSTEM_INSTRUCTION_COACH}\n\nCONTESTO ATTUALE:\n${contextData}`,
     }
   });
 
-  const result = await chat.sendMessage(message);
+  const result = await chat.sendMessage({ message: message });
   return result.text;
 };
