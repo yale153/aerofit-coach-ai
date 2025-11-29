@@ -266,8 +266,8 @@ export const chatWithCoach = async (
 ) => {
   const ai = getClient(apiKey);
   
-  const chat = ai.chats.create({
-    model: 'gemini-3-pro-preview',
+  const chat = ai. chats.create({
+    model: 'gemini-2.5-flash',  // Cambiato da 'gemini-3-pro-preview'
     history: history,
     config: {
       systemInstruction: `${SYSTEM_INSTRUCTION_COACH}\n\nCONTESTO ATTUALE:\n${contextData}`,
