@@ -5,9 +5,9 @@ const getClient = (apiKey: string) => new GoogleGenAI({ apiKey });
 
 const SYSTEM_INSTRUCTION_COACH = `
 Sei il Tenente Colonnello "Falco", istruttore Aeronautica Militare. 
-Obiettivo: Body Recomposition (Definizione).
+Obiettivo: Body Recomposition (Definizione). 
 Stile: Tecnico, Autorevole, Motivante.
-Vincoli: NO BILANCIERI. Usa Manubri, Cavi, Macchine.
+Vincoli: NO BILANCIERI.  Usa Manubri, Cavi, Macchine. 
 `;
 
 const exerciseSchema: Schema = {
@@ -48,7 +48,7 @@ const singleSessionSchema: Schema = {
   properties: {
     title: { type: Type.STRING },
     exercises: {
-        type: Type.ARRAY,
+        type: Type. ARRAY,
         items: exerciseSchema
     }
   },
@@ -60,19 +60,19 @@ const generateId = () => {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
         return crypto.randomUUID();
     }
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    return Math.random().toString(36).substring(2, 15) + Math.random(). toString(36).substring(2, 15);
 };
 
 // Generates the SVG content for an exercise
 export const generateExerciseIllustration = async (apiKey: string, exerciseName: string): Promise<string> => {
     const ai = getClient(apiKey);
     const prompt = `
-      Generate a very simple, minimalist stick-figure pictogram (SVG) on a transparent background representing: "${exerciseName}".
-      Style: Thick white lines (stroke-width: 4px), rounded caps. Like a public signage icon or olympic sport pictogram.
-      NO TEXT. NO COMPLEX DETAILS. NO SHADING.
-      The SVG must be strictly XML. 
-      Output ONLY the <svg>...</svg> code.
-      ViewBox="0 0 100 100".
+      Generate a very simple, minimalist stick-figure pictogram (SVG) on a transparent background representing: "${exerciseName}". 
+      Style: Thick white lines (stroke-width: 4px), rounded caps.  Like a public signage icon or olympic sport pictogram.
+      NO TEXT.  NO COMPLEX DETAILS. NO SHADING. 
+      The SVG must be strictly XML.  
+      Output ONLY the <svg>...</svg> code. 
+      ViewBox="0 0 100 100". 
     `;
 
     try {
@@ -84,18 +84,18 @@ export const generateExerciseIllustration = async (apiKey: string, exerciseName:
         
         let svg = response.text || "";
         // Aggressive cleanup to extract just the SVG
-        const svgMatch = svg.match(/<svg[\s\S]*?<\/svg>/i);
+        const svgMatch = svg.match(/<svg[\s\S]*? <\/svg>/i);
         if (svgMatch) {
             svg = svgMatch[0];
         } else {
              // Fallback cleanup if regex fails but content is there
-            svg = svg.replace(/```svg/g, '').replace(/```xml/g, '').replace(/```/g, '').trim();
+            svg = svg.replace(/```svg/g, ''). replace(/```xml/g, ''). replace(/```/g, ''). trim();
         }
 
-        if (!svg.startsWith('<svg')) return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" stroke="white" stroke-width="2" fill="none"/><text x="50" y="55" fill="white" font-size="10" text-anchor="middle">NO IMG</text></svg>`;
+        if (! svg. startsWith('<svg')) return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" stroke="white" stroke-width="2" fill="none"/><text x="50" y="55" text-anchor="middle" fill="white" font-size="8">N/A</text></svg>`;
         return svg;
     } catch (e) {
-        return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="none" stroke="#444"/><text x="50" y="50" text-anchor="middle" fill="#666" font-size="10">ERROR</text></svg>`;
+        return `<svg viewBox="0 0 100 100" xmlns="http://www. w3.org/2000/svg"><rect width="100" height="100" fill="none" stroke="#444"/><text x="50" y="50" text-anchor="middle" fill="#666" font-size="10">ERROR</text></svg>`;
     }
 };
 
@@ -108,21 +108,21 @@ export const generateWeeklyPlan = async (
   const ai = getClient(apiKey);
   
   const prompt = `
-    Crea una scheda settimanale di ${stats.sessionsPerWeek} sessioni.
+    Crea una scheda settimanale di ${stats.sessionsPerWeek} sessioni. 
     Utente: ${stats.height}cm, ${stats.weight}kg.
     Target: Definizione / Military Fitness.
     Durata sessione: ${durationMinutes} min.
     Storico recente: ${historySummary}
     
     CRITERI FONDAMENTALI:
-    1. Primo esercizio SEMPRE Cardio (es. Vogatore, Tapis Roulant) come Warmup.
-    2. Usa manubri, cavi, macchine. NIENTE BILANCIERI.
+    1. Primo esercizio SEMPRE Cardio (es.  Vogatore, Tapis Roulant) come Warmup. 
+    2.  Usa manubri, cavi, macchine.  NIENTE BILANCIERI. 
     3. Ogni sessione deve avere un titolo militare (es. "Protocollo Alpha", "Operazione Gambe").
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash', 
+      model: 'gemini-2. 5-flash', 
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION_COACH,
@@ -135,10 +135,10 @@ export const generateWeeklyPlan = async (
     return rawData.map((session: any) => ({
       ...session,
       id: generateId(),
-      dateCreated: new Date().toISOString(),
+      dateCreated: new Date(). toISOString(),
       durationMinutes,
       completed: false,
-      exercises: session.exercises.map((ex: any) => ({
+      exercises: session.exercises. map((ex: any) => ({
         ...ex,
         id: generateId(),
       }))
@@ -158,21 +158,21 @@ export const generateQuickSession = async (
 ): Promise<WorkoutSession> => {
     const ai = getClient(apiKey);
     const prompt = `
-        Genera UNA SESSIONE COMPLETA di allenamento "Rapida".
+        Genera UNA SESSIONE COMPLETA di allenamento "Rapida". 
         Durata target: ${durationMinutes} minuti.
-        Focus muscolare: ${muscleFocus}.
-        Storico: ${historySummary}.
+        Focus muscolare: ${muscleFocus}. 
+        Storico: ${historySummary}. 
         
-        IMPORTANTE: Genera almeno 5-7 esercizi per coprire la durata di ${durationMinutes} minuti.
+        IMPORTANTE: Genera almeno 5-7 esercizi per coprire la durata di ${durationMinutes} minuti. 
         Struttura:
         1. Riscaldamento (Cardio)
-        2. Esercizi Core / Focus (Manubri, Cavi, Macchine)
+        2.  Esercizi Core / Focus (Manubri, Cavi, Macchine)
         3. Defaticamento
         
-        Regole: No bilancieri. Stile military.
+        Regole: No bilancieri. Stile military. 
     `;
 
-    const response = await ai.models.generateContent({
+    const response = await ai. models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
@@ -184,13 +184,13 @@ export const generateQuickSession = async (
 
     const data = JSON.parse(response.text || "{}");
     return {
-        ...data,
+        ... data,
         id: generateId(),
         dateCreated: new Date().toISOString(),
         durationMinutes,
         completed: false,
         isQuickSession: true,
-        exercises: data.exercises?.map((ex: any) => ({
+        exercises: data. exercises?. map((ex: any) => ({
             ...ex,
             id: generateId()
         })) || []
@@ -205,12 +205,12 @@ export const swapExercise = async (
   const ai = getClient(apiKey);
   
   const prompt = `
-    Sostituisci l'esercizio: "${currentExercise.name}" (${currentExercise.muscleGroup}).
-    Motivo: ${reason}.
+    Sostituisci l'esercizio: "${currentExercise. name}" (${currentExercise.muscleGroup}). 
+    Motivo: ${reason}. 
     Trova un'alternativa valida usando cavi o manubri o macchine diverse.
   `;
 
-  const response = await ai.models.generateContent({
+  const response = await ai. models.generateContent({
     model: 'gemini-2.5-flash',
     contents: prompt,
     config: {
@@ -220,7 +220,7 @@ export const swapExercise = async (
     }
   });
 
-  const newExercise = JSON.parse(response.text || "{}");
+  const newExercise = JSON.parse(response. text || "{}");
   
   // CRITICAL FIX: Reuse the existing ID so React knows which component to update
   return {
@@ -232,7 +232,7 @@ export const swapExercise = async (
     isCompleted: false,
     // Preserve history
     previousVersions: currentExercise.previousVersions 
-        ? [...currentExercise.previousVersions, currentExercise] 
+        ? [... currentExercise. previousVersions, currentExercise] 
         : [currentExercise]
   };
 };
@@ -242,10 +242,10 @@ export const addSingleExercise = async (
     context: string
 ): Promise<Exercise> => {
     const ai = getClient(apiKey);
-    const prompt = `Aggiungi un esercizio efficace per completare questa sessione. Contesto: ${context}.`;
+    const prompt = `Aggiungi un esercizio efficace per completare questa sessione.  Contesto: ${context}. `;
     
     const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2. 5-flash',
         contents: prompt,
         config: {
             systemInstruction: SYSTEM_INSTRUCTION_COACH,
@@ -266,8 +266,8 @@ export const chatWithCoach = async (
 ) => {
   const ai = getClient(apiKey);
   
-  const chat = ai. chats.create({
-    model: 'gemini-2.5-flash',  // Cambiato da 'gemini-3-pro-preview'
+  const chat = await ai.chats. create({
+    model: 'gemini-2.5-flash',
     history: history,
     config: {
       systemInstruction: `${SYSTEM_INSTRUCTION_COACH}\n\nCONTESTO ATTUALE:\n${contextData}`,
