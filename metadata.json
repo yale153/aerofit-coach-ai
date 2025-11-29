@@ -1,0 +1,7 @@
+{
+  "name": "AeroFit Coach AI",
+  "description": "Un coach virtuale dell'Aeronautica Militare per allenamenti personalizzati e monitoraggio dei progressi.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
