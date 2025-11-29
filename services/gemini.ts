@@ -274,6 +274,6 @@ export const chatWithCoach = async (
     }
   });
 
-  const result = await chat.sendMessage({ message });
+  const result = await chat.sendMessage(message);
   return result.text;
 };
